@@ -1,39 +1,52 @@
-import React from 'react';
+import React from "react";
+import styled from "styled-components";
+import { Cards, CountryPicker, Chart } from "./components";
+import { fetchData } from "./api/";
+import image from "./images/image.png";
+import { useState, useEffect } from "react";
+import { CovidProvider } from "./context/covidContext";
 
-import { Cards, CountryPicker, Chart } from './components';
-import { fetchData } from './api/';
-import styles from './App.module.css';
+const StyledContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
 
-import image from './images/image.png';
+const StyledImage = styled.image`
+  width: 370px;
+  margin-top: 50px;
+`;
 
-class App extends React.Component {
-  state = {
-    data: {},
-    country: '',
-  }
+const App = () => {
+  const [data, setData] = useState({});
+  const [country, setCountry] = useState(null);
 
-  async componentDidMount() {
-    const data = await fetchData();
+  useEffect(() => {
+    const fetcher = async () => {
+      const data = await fetchData(country);
+      setData(data);
+    };
+    fetcher();
+  }, [country]);
 
-    this.setState({ data });
-  }
-
-  handleCountryChange = async (country) => {
-    const data = await fetchData(country);
-
-    this.setState({ data, country: country });
-  }
+  const handleCountryChange = (e) => {
+    setCountry(e.value);
+  };
 
   render() {
-    const { data, country } = this.state;
+  const { data, country } = this.state;
 
     return (
-      <div className={styles.container}>
-        <img className={styles.image} src={image} alt="COVID-19" />
-        <Cards data={data} />
-        <CountryPicker handleCountryChange={this.handleCountryChange} />
-        <Chart data={data} country={country} /> 
-      </div>
+      <>
+        <CovidProvider>
+          <StyledContainer>
+            <StyledImage src={image} alt={"COVID-19"} />
+            <Cards data={data} />
+            <CountryPicker handleCountryChange={handleCountryChange} />
+            <Chart data={data} country={country} />
+          </StyledContainer>
+        </CovidProvider>
+      </>
     );
   }
 }
