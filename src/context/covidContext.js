@@ -13,8 +13,8 @@ export const CovidContext = createContext(COVID_DEFAULT_VALUE);
 export const CovidProvider = ({ children }) => {
   const { state, dispatch } = useTracker();
   return (
-    <CovidProvider.Provider value={{ state, dispatch }}>
+    <CovidContext.Provider value={{ state, dispatch }}>
       {children}
-    </CovidProvider.Provider>
+    </CovidContext.Provider>
   );
 };
